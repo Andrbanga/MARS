@@ -15,15 +15,28 @@ class Mobile_Robot:
   def __init__(self, x_start, y_start, map_, technograph=None):
     self.x = x_start
     self.y = y_start
+    self.x_prev = None
+    self.y_prev = None
     self.map = map_
     self.map_shape = map_.shape
     #self.current_task = None #????
-    #pass
+
   
-  def getxy(self):
-    return self.x, self.y
+  def getxy(self, prev=False):
+    if prev:
+      return self.x, self.y, self.x_prev, self.y_prev  
+    else:
+      return self.x, self.y
   
-  
+  def find(self, coor):
+    if self.x_prev != None and self.x_prev != None:
+      arg_x = np.argwhere(coor[0, :] == self.x_prev)[0]
+      arg_y = coor[1, arg_x[:]] == self.y_prev
+      del_ind = arg_x[np.where(arg_y == True)[0]]
+      return np.delete(coor, del_ind, 1)    
+    else:
+      return coor
+    
   def sense(self):
     if self.x != 0 and self.y != 0 and self.x != self.map_shape[0] and self.y != self.map_shape[1]:
       #условие на границы карты
@@ -39,15 +52,11 @@ class Mobile_Robot:
       
   
   def move(self, new_x, new_y):
-    #print(self.x, self.y)
+    self.x_prev = self.x
+    self.y_prev = self.y
     self.x = new_x
     self.y = new_y
-    #print(self.x, self.y)
-  
-
-#  FIX IT  
-# добавить указание на старые точки ибо он прыгает от новой к старой
-    
+        
     
   def solver(self, res, coor):
     ind = np.argwhere(res == 1)[0]
@@ -63,6 +72,12 @@ class Mobile_Robot:
 
     
   def work(self):
+    # один рабочий цикл
+    res, coor = self.sense()
+    coor_upd = self.find(coor)
+    self.solver(res, coor_upd)
+    
+    
     self.sense()
     ind = np.where(out == 1)[0]
     print(ind)
@@ -74,20 +89,6 @@ class Mobile_Robot:
       # тупик 
     else:
       print('need to move')
-
-#    if (p1 or p2) or (p2 or p3) or (p1 or p3):
-#      pass
-#      # коридор
-#    
-#    elif not all(p1, p2, p3):
-#      pass
-#      # варинат с тупиком 
-#      # надо отметить в техн графе а что ДАЛЬШЕ?
-#    
-#    else:
-#      pass
-#      #перекресток с 3 дорогами
-#      # 
       
   def main(self):
     self.work()
@@ -107,27 +108,27 @@ y_st = 3
 mapp[x_st, y_st+1]
 mapp
 
-def vis(_map, i, x, y):
+
+def vis(_map, x, y, i, save=False):
   plt.figure(i, facecolor='w',figsize=(7,7))
   dmin,dmax = 0, 15
-  plt.scatter(x, y)
-  plt.imshow(mapp, vmin=dmin, vmax=dmax)
-
+  plt.scatter(x, y, color='magenta')
+  img = plt.imshow(mapp, vmin=dmin, vmax=dmax, animated=True)
+  if save:
+    plt.savefig('iter_{0}'.format(i), dpi=200)
+  return img 
 
 
 robot1 = Mobile_Robot(x_start=3, y_start=8, map_=mapp)
-robot1.getxy()
-vis(mapp, 1, 3, 8)
 
-for i in range(5):
-  x, y = robot1.getxy()
-  print(x, y)
-#  plt.figure(i, facecolor='w',figsize=(7,7))
-#  dmin,dmax = 0, 15
-#  plt.scatter(x, y)
-#  plt.imshow(mapp, vmin=dmin, vmax=dmax)
-
+for i in range(10):
+  x1, y1 = robot1.getxy()
+  print(x1, y1)
+  vis(mapp, x1, y1, i)
   res, coor = robot1.sense()
-  robot1.solver(res, coor)
+  coor_upd = robot1.find(coor)
+  robot1.solver(res, coor_upd)
+  print(robot1.getxy(True))
   
+ 
   
