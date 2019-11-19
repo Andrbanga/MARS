@@ -48,7 +48,7 @@ class Mobile_Robot:
       
       return np.array([p1, p3, p4, p2]), np.array([[self.x + 1, self.x - 1, self.x, self.x], [self.y, self.y, self.y + 1, self.y - 1]])
     else:
-      print('Ууу бля')
+      print('Уууу')
       
   
   def move(self, new_x, new_y):
