@@ -17,16 +17,16 @@ def createMap(n, m):
 
     array = lines_to_array(tree.graph_to_lines(graph_), n, m)
     
-    # tree.visualize_all(graph_, array, field_width, field_height)
+    tree.visualize_all(graph, array, field_width, field_height)
 
-    plt.imshow(array, interpolation='none', cmap='gray')
+    # plt.imshow(array, interpolation='none', cmap='gray')
 
-    plt.xlim(0, field_width)
-    plt.ylim(0, field_height)
+    # plt.xlim(0, field_width)
+    # plt.ylim(0, field_height)
 
-    plt.grid(True)
+    # plt.grid(True)
 
-    plt.show()
+    # plt.show()
 
 
     return array
