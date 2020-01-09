@@ -38,6 +38,9 @@ class Mobile_Robot:
       return coor
     
   def sense(self):
+   
+    ## ADD работу рядом с границей карты 
+    
     if self.x != 0 and self.y != 0 and self.x != self.map_shape[0] and self.y != self.map_shape[1]:
       #условие на границы карты
       # добавить другие варианты
@@ -48,7 +51,8 @@ class Mobile_Robot:
       
       return np.array([p1, p3, p4, p2]), np.array([[self.x + 1, self.x - 1, self.x, self.x], [self.y, self.y, self.y + 1, self.y - 1]])
     else:
-      print('Уууу')
+      #raise exception 
+      print('Уууу') # out of map
       
   
   def move(self, new_x, new_y):
@@ -61,11 +65,33 @@ class Mobile_Robot:
   def solver(self, res, coor):
     ind = np.argwhere(res == 1)[0]
     if ind.size > 1:
-      pass
       #развилка
+      if ind.size == 2:
+          pass 
+          
+          #rnd_ind = np.random.randint(0, 2)
+          #self.move(coor[0, rnd_ind], coor[1, rnd_ind])
+         
+          # NEED update task status in work_graph TO <<IN PROGRESS>> 
+      
+        
+      elif ind.size == 3:
+          pass
+          #rnd_ind = np.random.randint(0, 3)
+          #self.move(coor[0, rnd_ind], coor[1, rnd_ind])
+          
+          # NEED update task status in work_graph TO <<IN PROGRESS>> 
+
+          
     elif ind.size == 0:
       pass
+
+      # NEED update task status in work_graph TO <<DONE>> 
+          
+      ### if availiable new_task move 2 new task
+      ### ELSE all map is done,  work finished 
       # тупик 
+      
     else:
       robot1.move(coor[0, ind[0]], 
                   coor[1, ind[0]])
